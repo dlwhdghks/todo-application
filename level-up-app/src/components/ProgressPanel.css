@@ -1,0 +1,53 @@
+.progress-panel {
+  margin: 0 16px 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-radius: 12px;
+  color: #fff;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.progress-level {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.progress-exp {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e94560, #f5a623);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.level-up-message {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f5a623;
+  animation: levelUpPulse 0.5s ease-in-out;
+}
+
+@keyframes levelUpPulse {
+  0% { transform: scale(1); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}

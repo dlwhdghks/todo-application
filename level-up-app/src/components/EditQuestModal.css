@@ -1,0 +1,72 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.modal-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.modal-delete-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #e94560;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.modal-delete-btn:hover {
+  background: #d63651;
+}
+
+.delete-confirm {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.delete-confirm p {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+  text-align: center;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  gap: 8px;
+}

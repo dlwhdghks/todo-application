@@ -1,0 +1,28 @@
+.view-mode-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 16px 16px;
+}
+
+.view-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-tab:hover {
+  background: #f0f0f0;
+}
+
+.view-tab.active {
+  background: #1a1a2e;
+  color: #fff;
+  border-color: #1a1a2e;
+}

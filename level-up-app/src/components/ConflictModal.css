@@ -1,0 +1,44 @@
+.conflict-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.conflict-message {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a1a2e;
+  margin: 0 0 20px;
+}
+
+.conflict-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.conflict-no-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+}
+
+.conflict-yes-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #e94560;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
