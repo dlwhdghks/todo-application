@@ -25,9 +25,16 @@ export function useAuth() {
   }, []);
 
   // 회원가입
+  // 이미 가입했지만 인증 안 된 경우 인증 메일을 재발송
   async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
+
+    // Supabase는 이미 존재하는 미인증 유저에 대해 빈 session을 반환
+    // 이 경우 인증 메일 재발송
+    if (data.user && !data.session) {
+      await supabase.auth.resend({ type: "signup", email });
+    }
   }
 
   // 로그인
