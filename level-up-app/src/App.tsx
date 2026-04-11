@@ -107,11 +107,11 @@ function MainApp({
     }
   }
 
-  // 퀘스트 추가 + 친구 초대
-  function handleAddQuest(quest: Quest, inviteFriendIds: string[]) {
-    addQuest(quest);
+  // 퀘스트 추가 + 친구 초대 (퀘스트 저장 완료 후 초대 발송)
+  async function handleAddQuest(quest: Quest, inviteFriendIds: string[]) {
+    await addQuest(quest);
     if (inviteFriendIds.length > 0) {
-      sendInvitations(quest.id, inviteFriendIds);
+      await sendInvitations(quest.id, inviteFriendIds);
     }
   }
 
