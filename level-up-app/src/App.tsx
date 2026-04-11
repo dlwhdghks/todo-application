@@ -1,12 +1,15 @@
 import { useState } from "react";
 import type { Quest, ViewMode } from "./types";
 import { useAuth } from "./hooks/useAuth";
+import { useProfile } from "./hooks/useProfile";
 import { useSupabaseQuests } from "./hooks/useSupabaseQuests";
 import { useSupabaseProgress } from "./hooks/useSupabaseProgress";
+import { useFriends } from "./hooks/useFriends";
 import { loadViewMode, saveViewMode } from "./utils/localStorage";
 import { isQuestCompletedOnDate } from "./utils/questUtils";
 
 import { AuthForm } from "./components/AuthForm";
+import { NicknameForm } from "./components/NicknameForm";
 import { Header } from "./components/Header";
 import { ProgressPanel } from "./components/ProgressPanel";
 import { ViewModeTabs } from "./components/ViewModeTabs";
@@ -15,17 +18,17 @@ import { QuestList } from "./components/QuestList";
 import { OverdueQuestSection } from "./components/OverdueQuestSection";
 import { EditQuestModal } from "./components/EditQuestModal";
 import { ConflictModal } from "./components/ConflictModal";
+import { FriendsPanel } from "./components/FriendsPanel";
 
 import "./App.css";
 
 export default function App() {
   const { user, loading: authLoading, signIn, signUp, signOut } = useAuth();
 
-  // 로그인 전이면 로그인 화면 표시
   if (authLoading) {
     return (
       <div className="app loading-screen">
-        <p>Loading...</p>
+        <p className="pixel-font" style={{ fontSize: 12 }}>Loading...</p>
       </div>
     );
   }
@@ -34,11 +37,9 @@ export default function App() {
     return <AuthForm onSignIn={signIn} onSignUp={signUp} />;
   }
 
-  // 로그인 후 메인 앱
   return <MainApp userId={user.id} userEmail={user.email} onSignOut={signOut} />;
 }
 
-// 로그인된 상태에서 보여주는 메인 앱
 function MainApp({
   userId,
   userEmail,
@@ -48,10 +49,12 @@ function MainApp({
   userEmail: string | undefined;
   onSignOut: () => void;
 }) {
+  const { profile, loading: profileLoading, createProfile } = useProfile(userId);
   const { quests, addQuest, updateQuest, deleteQuest, toggleComplete } =
     useSupabaseQuests(userId);
   const { progress, addExp, removeExp, showLevelUp } =
     useSupabaseProgress(userId);
+  const { friends, addFriendByCode, getFriendQuests } = useFriends(userId);
 
   const [viewMode, setViewMode] = useState<ViewMode>(() => loadViewMode());
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
@@ -59,6 +62,21 @@ function MainApp({
     existing: Quest;
     newQuest: Quest;
   } | null>(null);
+  const [showFriends, setShowFriends] = useState(false);
+
+  // 프로필 로딩 중
+  if (profileLoading) {
+    return (
+      <div className="app loading-screen">
+        <p className="pixel-font" style={{ fontSize: 12 }}>Loading...</p>
+      </div>
+    );
+  }
+
+  // 닉네임 미설정 -> 닉네임 입력 화면
+  if (!profile) {
+    return <NicknameForm onSubmit={createProfile} />;
+  }
 
   function handleViewModeChange(mode: ViewMode) {
     setViewMode(mode);
@@ -102,9 +120,8 @@ function MainApp({
 
   return (
     <div className="app">
-      <Header />
+      <Header onOpenFriends={() => setShowFriends(true)} />
 
-      {/* 유저 정보 + 로그아웃 */}
       <div className="user-bar">
         <span className="user-email">{userEmail}</span>
         <button className="sign-out-btn" onClick={onSignOut}>
@@ -112,7 +129,11 @@ function MainApp({
         </button>
       </div>
 
-      <ProgressPanel progress={progress} showLevelUp={showLevelUp} />
+      <ProgressPanel
+        progress={progress}
+        showLevelUp={showLevelUp}
+        nickname={profile.nickname}
+      />
       <ViewModeTabs viewMode={viewMode} onChange={handleViewModeChange} />
 
       <QuestForm
@@ -148,6 +169,16 @@ function MainApp({
           existingQuest={conflictData.existing}
           onConfirm={handleConflictConfirm}
           onCancel={() => setConflictData(null)}
+        />
+      )}
+
+      {showFriends && (
+        <FriendsPanel
+          friendCode={profile.friendCode}
+          friends={friends}
+          onAddFriend={addFriendByCode}
+          onGetFriendQuests={getFriendQuests}
+          onClose={() => setShowFriends(false)}
         />
       )}
     </div>

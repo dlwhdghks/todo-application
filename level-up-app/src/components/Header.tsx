@@ -1,9 +1,16 @@
 import "./Header.css";
 
-export function Header() {
+interface Props {
+  onOpenFriends: () => void;
+}
+
+export function Header({ onOpenFriends }: Props) {
   return (
     <header className="header">
-      <h1 className="header-title">Level Up</h1>
+      <button className="header-party-btn" onClick={onOpenFriends} title="Party">
+        &#9876;
+      </button>
+      <h1 className="header-title pixel-font">Level Up</h1>
       <p className="header-subtitle">Complete quests. Gain EXP. Level up.</p>
     </header>
   );

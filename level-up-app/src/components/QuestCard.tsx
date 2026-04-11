@@ -5,32 +5,32 @@ import "./QuestCard.css";
 interface Props {
   quest: Quest;
   date: string;
-  onToggleComplete: (questId: string, date: string) => void;
-  onClick: (quest: Quest) => void;
+  onToggleComplete?: (questId: string, date: string) => void;
+  onClick?: (quest: Quest) => void;
+  readOnly?: boolean;
 }
 
-export function QuestCard({ quest, date, onToggleComplete, onClick }: Props) {
+export function QuestCard({ quest, date, onToggleComplete, onClick, readOnly }: Props) {
   const completed = isQuestCompletedOnDate(quest, date);
 
   return (
     <div
       className={`quest-card ${completed ? "completed" : ""}`}
-      onClick={() => onClick(quest)}
+      onClick={() => onClick?.(quest)}
     >
-      {/* 왼쪽 색상 바 */}
       <div className="quest-color-bar" style={{ background: quest.color }} />
 
-      {/* 체크박스 - 카드 클릭과 분리하기 위해 stopPropagation 사용 */}
-      <input
-        type="checkbox"
-        className="quest-checkbox"
-        checked={completed}
-        onChange={(e) => {
-          e.stopPropagation();
-          onToggleComplete(quest.id, date);
-        }}
-        onClick={(e) => e.stopPropagation()}
-      />
+      {!readOnly && (
+        <button
+          className={`pixel-checkbox ${completed ? "checked" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleComplete?.(quest.id, date);
+          }}
+        >
+          {completed ? "\u2716" : ""}
+        </button>
+      )}
 
       <div className="quest-info">
         <span className="quest-title">{quest.title}</span>
@@ -38,7 +38,7 @@ export function QuestCard({ quest, date, onToggleComplete, onClick }: Props) {
       </div>
 
       {quest.repeat !== "none" && (
-        <span className="quest-repeat-badge">{quest.repeat}</span>
+        <span className="quest-repeat-badge pixel-font">{quest.repeat}</span>
       )}
     </div>
   );

@@ -1,0 +1,174 @@
+.friends-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.friends-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.friends-back-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #1a1a2e;
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.friends-title {
+  font-size: 14px;
+  color: #1a1a2e;
+  margin: 0 0 16px;
+}
+
+.friends-title-level {
+  font-size: 10px;
+  color: #f5a623;
+  margin-left: 8px;
+}
+
+.friends-header .friends-title {
+  margin: 0;
+}
+
+/* 내 친구 코드 */
+.my-code-section {
+  background: #f8f8fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.my-code-label {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+}
+
+.my-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.my-code-value {
+  font-size: 14px;
+  color: #1a1a2e;
+  letter-spacing: 2px;
+}
+
+.my-code-copy-btn {
+  padding: 4px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  color: #666;
+}
+
+.my-code-copy-btn:hover {
+  background: #f0f0f0;
+}
+
+/* 친구 추가 */
+.add-friend-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.add-friend-section .form-input {
+  flex: 1;
+}
+
+.add-friend-btn {
+  padding: 8px 16px;
+  border: 2px solid #1a1a2e;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-friend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.friends-error {
+  font-size: 12px;
+  color: #e94560;
+  margin-bottom: 8px;
+}
+
+.friends-success {
+  font-size: 12px;
+  color: #10b981;
+  margin-bottom: 8px;
+}
+
+.friends-search {
+  margin-bottom: 8px;
+}
+
+/* 친구 목록 */
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.friend-item:hover {
+  background: #f5f5f7;
+}
+
+.friend-nickname {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.friend-level {
+  font-size: 9px;
+  color: #f5a623;
+}
+
+.friends-empty {
+  font-size: 13px;
+  color: #bbb;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 친구 퀘스트 보기 */
+.friend-quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
