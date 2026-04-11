@@ -6,6 +6,7 @@ import { useSupabaseQuests } from "./hooks/useSupabaseQuests";
 import { useSupabaseProgress } from "./hooks/useSupabaseProgress";
 import { useFriends } from "./hooks/useFriends";
 import { useInvitations } from "./hooks/useInvitations";
+import { useApiTokens } from "./hooks/useApiTokens";
 import { loadViewMode, saveViewMode } from "./utils/localStorage";
 import { isQuestCompletedOnDate } from "./utils/questUtils";
 
@@ -21,6 +22,7 @@ import { EditQuestModal } from "./components/EditQuestModal";
 import { ConflictModal } from "./components/ConflictModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { NotificationPanel } from "./components/NotificationPanel";
+import { ApiTokenPanel } from "./components/ApiTokenPanel";
 
 import "./App.css";
 
@@ -65,6 +67,7 @@ function MainApp({
     declineInvitation,
     refreshInvitations,
   } = useInvitations(userId);
+  const { tokens, createToken, deleteToken } = useApiTokens(userId);
 
   const [viewMode, setViewMode] = useState<ViewMode>(() => loadViewMode());
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
@@ -75,6 +78,7 @@ function MainApp({
   } | null>(null);
   const [showFriends, setShowFriends] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showApiTokens, setShowApiTokens] = useState(false);
 
   if (profileLoading) {
     return (
@@ -156,9 +160,14 @@ function MainApp({
 
       <div className="user-bar">
         <span className="user-email">{userEmail}</span>
-        <button className="sign-out-btn" onClick={onSignOut}>
-          Sign Out
-        </button>
+        <div className="user-bar-actions">
+          <button className="api-btn" onClick={() => setShowApiTokens(true)}>
+            API
+          </button>
+          <button className="sign-out-btn" onClick={onSignOut}>
+            Sign Out
+          </button>
+        </div>
       </div>
 
       <ProgressPanel
@@ -212,6 +221,15 @@ function MainApp({
           onAddFriend={addFriendByCode}
           onGetFriendQuests={getFriendQuests}
           onClose={() => setShowFriends(false)}
+        />
+      )}
+
+      {showApiTokens && (
+        <ApiTokenPanel
+          tokens={tokens}
+          onCreate={createToken}
+          onDelete={deleteToken}
+          onClose={() => setShowApiTokens(false)}
         />
       )}
 

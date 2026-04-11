@@ -1,0 +1,169 @@
+.api-token-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.api-token-title {
+  font-size: 12px;
+  color: #1a1a2e;
+  margin: 0 0 16px;
+}
+
+/* 새 토큰 알림 */
+.new-token-alert {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.new-token-label {
+  font-size: 12px;
+  color: #166534;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.new-token-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.new-token-value {
+  flex: 1;
+  font-size: 11px;
+  background: #fff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  word-break: break-all;
+}
+
+.new-token-dismiss {
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  background: #166534;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 토큰 생성 */
+.create-token-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.create-token-section .form-input {
+  flex: 1;
+}
+
+/* 토큰 목록 */
+.token-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.token-empty {
+  font-size: 13px;
+  color: #bbb;
+  text-align: center;
+  padding: 12px;
+}
+
+.token-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f8f8fa;
+  border-radius: 8px;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.token-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.token-preview {
+  font-size: 11px;
+  font-family: monospace;
+  color: #888;
+}
+
+.token-meta {
+  font-size: 10px;
+  color: #aaa;
+}
+
+.token-delete-btn {
+  padding: 4px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fff;
+  color: #e94560;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.token-delete-btn:hover {
+  background: #fef2f2;
+}
+
+/* API 사용법 */
+.api-docs-section {
+  padding: 12px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  color: #ccc;
+}
+
+.api-docs-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.api-docs-example {
+  display: block;
+  font-size: 11px;
+  background: #16213e;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+  color: #4ecdc4;
+}
+
+.api-docs-endpoints {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-family: monospace;
+  color: #888;
+}
