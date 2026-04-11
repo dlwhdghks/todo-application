@@ -70,3 +70,42 @@
   display: flex;
   gap: 8px;
 }
+
+/* 파티 멤버 */
+.party-members-section {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #f8f8fa;
+  border-radius: 8px;
+}
+
+.party-members-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.party-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.party-member-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #1a1a2e;
+}
+
+.party-host-icon {
+  font-size: 14px;
+  color: #f5a623;
+}
+
+.party-member-name {
+  font-weight: 600;
+}

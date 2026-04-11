@@ -74,6 +74,11 @@
   text-overflow: ellipsis;
 }
 
+.quest-party-icon {
+  font-size: 13px;
+  color: #f5a623;
+}
+
 .quest-time {
   font-size: 12px;
   color: #888;

@@ -12,6 +12,7 @@ interface Props {
 
 export function QuestCard({ quest, date, onToggleComplete, onClick, readOnly }: Props) {
   const completed = isQuestCompletedOnDate(quest, date);
+  const hasParty = quest.partyMembers && quest.partyMembers.length > 0;
 
   return (
     <div
@@ -33,7 +34,10 @@ export function QuestCard({ quest, date, onToggleComplete, onClick, readOnly }: 
       )}
 
       <div className="quest-info">
-        <span className="quest-title">{quest.title}</span>
+        <span className="quest-title">
+          {hasParty && <span className="quest-party-icon" title="Party quest">&#9818; </span>}
+          {quest.title}
+        </span>
         <span className="quest-time">{quest.time}</span>
       </div>
 

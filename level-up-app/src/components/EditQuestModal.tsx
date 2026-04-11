@@ -28,6 +28,8 @@ export function EditQuestModal({ quest, onSave, onDelete, onClose }: Props) {
   const [color, setColor] = useState(quest.color);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  const hasParty = quest.partyMembers && quest.partyMembers.length > 0;
+
   function handleSave() {
     if (!title.trim()) return;
     onSave({ ...quest, title: title.trim(), date, time, repeat, color });
@@ -107,6 +109,23 @@ export function EditQuestModal({ quest, onSave, onDelete, onClose }: Props) {
           </div>
         </div>
 
+        {/* 파티 멤버 표시 */}
+        {hasParty && (
+          <div className="party-members-section">
+            <span className="party-members-label">Party Members</span>
+            <div className="party-members-list">
+              {quest.partyMembers!.map((member, i) => (
+                <div key={i} className="party-member-item">
+                  {member.isHost && (
+                    <span className="party-host-icon" title="Host">&#9818;</span>
+                  )}
+                  <span className="party-member-name">{member.nickname}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="modal-actions">
           <button className="modal-delete-btn" onClick={handleDelete}>
             Delete
@@ -119,7 +138,6 @@ export function EditQuestModal({ quest, onSave, onDelete, onClose }: Props) {
           </button>
         </div>
 
-        {/* 삭제 확인 팝업 */}
         {showDeleteConfirm && (
           <div className="delete-confirm">
             <p>Are you sure you want to delete this quest?</p>

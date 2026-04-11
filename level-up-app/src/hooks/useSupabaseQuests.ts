@@ -1,15 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Quest } from "../types";
+import type { Quest, PartyMember } from "../types";
 import { supabase } from "../utils/supabase";
 
-// Supabase에서 퀘스트를 관리하는 훅
 export function useSupabaseQuests(userId: string) {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 퀘스트 목록 불러오기
   const fetchQuests = useCallback(async () => {
-    // 퀘스트 기본 정보 가져오기
     const { data: questRows, error: qErr } = await supabase
       .from("quests")
       .select("*")
@@ -21,7 +18,6 @@ export function useSupabaseQuests(userId: string) {
       return;
     }
 
-    // 완료 기록 가져오기
     const { data: completionRows, error: cErr } = await supabase
       .from("quest_completions")
       .select("*")
@@ -33,19 +29,111 @@ export function useSupabaseQuests(userId: string) {
       return;
     }
 
-    // DB 데이터를 앱에서 쓰는 Quest 형태로 변환
-    const questList: Quest[] = (questRows || []).map((row) => ({
-      id: row.id,
-      title: row.title,
-      date: row.date,
-      time: row.time,
-      repeat: row.repeat as Quest["repeat"],
-      color: row.color,
-      createdAt: row.created_at,
-      completedDates: (completionRows || [])
-        .filter((c) => c.quest_id === row.id)
-        .map((c) => c.completed_date),
-    }));
+    // 내가 보낸 초대 (내가 host인 경우)
+    const { data: sentInvites } = await supabase
+      .from("quest_invitations")
+      .select("quest_id, receiver_id, status")
+      .eq("sender_id", userId)
+      .eq("status", "accepted");
+
+    // 내가 받은 초대 (다른 사람이 host인 경우)
+    const { data: receivedInvites } = await supabase
+      .from("quest_invitations")
+      .select("quest_id, sender_id, status")
+      .eq("receiver_id", userId)
+      .eq("status", "accepted");
+
+    // 관련된 유저 ID 수집해서 닉네임 조회
+    const relatedUserIds = new Set<string>();
+    sentInvites?.forEach((inv) => relatedUserIds.add(inv.receiver_id));
+    receivedInvites?.forEach((inv) => relatedUserIds.add(inv.sender_id));
+
+    let profileMap: Record<string, string> = {};
+    if (relatedUserIds.size > 0) {
+      const { data: profiles } = await supabase
+        .from("user_profiles")
+        .select("user_id, nickname")
+        .in("user_id", [...relatedUserIds]);
+
+      if (profiles) {
+        profileMap = Object.fromEntries(
+          profiles.map((p) => [p.user_id, p.nickname])
+        );
+      }
+    }
+
+    // 퀘스트별 파티 멤버 매핑
+    // 내가 보낸 초대에서 quest_id를 매칭 (원본 퀘스트 ID 기준)
+    // 내가 받은 초대에서 원본 quest_id로는 매칭이 안 됨 (복사된 퀘스트)
+    // -> 받은 초대의 경우 sender가 host
+    const sentByQuest: Record<string, PartyMember[]> = {};
+    sentInvites?.forEach((inv) => {
+      if (!sentByQuest[inv.quest_id]) sentByQuest[inv.quest_id] = [];
+      sentByQuest[inv.quest_id].push({
+        nickname: profileMap[inv.receiver_id] ?? "Unknown",
+        isHost: false,
+      });
+    });
+
+    // 받은 초대: quest_id는 원본 퀘스트 ID (host의 퀘스트)
+    // 내 복사된 퀘스트와 매칭하려면 title+date+time으로 연결해야 하지만,
+    // 간단하게 receivedInvites의 quest_id와 같은 title을 가진 내 퀘스트를 찾아 매핑
+    const receivedByTitle: Record<string, PartyMember> = {};
+    receivedInvites?.forEach((inv) => {
+      // 원본 퀘스트 제목 조회를 위해 나중에 처리
+      receivedByTitle[inv.quest_id] = {
+        nickname: profileMap[inv.sender_id] ?? "Unknown",
+        isHost: true,
+      };
+    });
+
+    // 원본 퀘스트 제목 조회 (받은 초대)
+    const originalQuestIds = Object.keys(receivedByTitle);
+    let originalQuests: Record<string, { title: string; date: string; time: string }> = {};
+    if (originalQuestIds.length > 0) {
+      const { data: originals } = await supabase
+        .from("quests")
+        .select("id, title, date, time")
+        .in("id", originalQuestIds);
+
+      if (originals) {
+        originalQuests = Object.fromEntries(
+          originals.map((q) => [q.id, { title: q.title, date: q.date, time: q.time }])
+        );
+      }
+    }
+
+    const questList: Quest[] = (questRows || []).map((row) => {
+      const members: PartyMember[] = [];
+
+      // 내가 보낸 초대의 멤버
+      if (sentByQuest[row.id]) {
+        members.push(...sentByQuest[row.id]);
+      }
+
+      // 내가 받은 초대인지 확인 (제목+날짜+시간으로 매칭)
+      for (const [origId, hostMember] of Object.entries(receivedByTitle)) {
+        const orig = originalQuests[origId];
+        if (orig && orig.title === row.title && orig.date === row.date && orig.time === row.time) {
+          members.push(hostMember);
+          break;
+        }
+      }
+
+      return {
+        id: row.id,
+        title: row.title,
+        date: row.date,
+        time: row.time,
+        repeat: row.repeat as Quest["repeat"],
+        color: row.color,
+        createdAt: row.created_at,
+        completedDates: (completionRows || [])
+          .filter((c) => c.quest_id === row.id)
+          .map((c) => c.completed_date),
+        partyMembers: members.length > 0 ? members : undefined,
+      };
+    });
 
     setQuests(questList);
     setLoading(false);
@@ -55,7 +143,6 @@ export function useSupabaseQuests(userId: string) {
     fetchQuests();
   }, [fetchQuests]);
 
-  // 퀘스트 추가
   async function addQuest(quest: Quest) {
     const { error } = await supabase.from("quests").insert({
       id: quest.id,
@@ -71,11 +158,9 @@ export function useSupabaseQuests(userId: string) {
       console.error("Failed to add quest:", error);
       return;
     }
-    // 화면 즉시 반영
     setQuests((prev) => [...prev, quest]);
   }
 
-  // 퀘스트 수정
   async function updateQuest(updated: Quest) {
     const { error } = await supabase
       .from("quests")
@@ -94,7 +179,6 @@ export function useSupabaseQuests(userId: string) {
     setQuests((prev) => prev.map((q) => (q.id === updated.id ? updated : q)));
   }
 
-  // 퀘스트 삭제
   async function deleteQuest(id: string) {
     const { error } = await supabase.from("quests").delete().eq("id", id);
     if (error) {
@@ -104,7 +188,6 @@ export function useSupabaseQuests(userId: string) {
     setQuests((prev) => prev.filter((q) => q.id !== id));
   }
 
-  // 완료/미완료 토글
   async function toggleComplete(questId: string, dateStr: string) {
     const quest = quests.find((q) => q.id === questId);
     if (!quest) return;
@@ -112,14 +195,12 @@ export function useSupabaseQuests(userId: string) {
     const alreadyDone = quest.completedDates.includes(dateStr);
 
     if (alreadyDone) {
-      // 완료 취소: DB에서 삭제
       await supabase
         .from("quest_completions")
         .delete()
         .eq("quest_id", questId)
         .eq("completed_date", dateStr);
     } else {
-      // 완료 처리: DB에 추가
       await supabase.from("quest_completions").insert({
         quest_id: questId,
         user_id: userId,
@@ -127,7 +208,6 @@ export function useSupabaseQuests(userId: string) {
       });
     }
 
-    // 화면 즉시 반영
     setQuests((prev) =>
       prev.map((q) => {
         if (q.id !== questId) return q;
