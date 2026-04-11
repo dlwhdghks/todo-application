@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { authenticateRequest } from "./_lib/auth";
-import { getAdminClient } from "./_lib/supabase";
+import { authenticateRequest } from "./_lib/auth.js";
+import { getAdminClient } from "./_lib/supabase.js";
 
 // GET /api/profile - 내 프로필 조회
 export default async function handler(req: VercelRequest, res: VercelResponse) {

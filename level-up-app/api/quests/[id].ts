@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { authenticateRequest } from "../_lib/auth";
-import { getAdminClient } from "../_lib/supabase";
+import { authenticateRequest } from "../_lib/auth.js";
+import { getAdminClient } from "../_lib/supabase.js";
 
 // PATCH  /api/quests/:id   - 퀘스트 수정
 // DELETE /api/quests/:id   - 퀘스트 삭제

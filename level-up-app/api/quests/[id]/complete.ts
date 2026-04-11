@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { authenticateRequest } from "../../_lib/auth";
-import { getAdminClient } from "../../_lib/supabase";
+import { authenticateRequest } from "../../_lib/auth.js";
+import { getAdminClient } from "../../_lib/supabase.js";
 
 // POST /api/quests/:id/complete   - 특정 날짜의 완료/미완료 토글
 // body: { date: "YYYY-MM-DD" }

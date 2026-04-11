@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { authenticateRequest } from "../_lib/auth";
-import { getAdminClient } from "../_lib/supabase";
+import { authenticateRequest } from "../_lib/auth.js";
+import { getAdminClient } from "../_lib/supabase.js";
 
 // GET  /api/quests       - 퀘스트 목록 조회
 // POST /api/quests       - 퀘스트 생성

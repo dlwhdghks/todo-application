@@ -1,5 +1,5 @@
 import type { VercelRequest } from "@vercel/node";
-import { getAdminClient } from "./supabase";
+import { getAdminClient } from "./supabase.js";
 
 // API 요청에서 Bearer token을 추출하고, 해당 유저 ID를 반환
 export async function authenticateRequest(
