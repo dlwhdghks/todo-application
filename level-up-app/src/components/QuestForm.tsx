@@ -30,6 +30,7 @@ export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
   const [repeat, setRepeat] = useState<"none" | "daily" | "weekly">("none");
   const [color, setColor] = useState(COLOR_OPTIONS[0]);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
+  const [showInvite, setShowInvite] = useState(false);
 
   function resetForm() {
     setTitle("");
@@ -38,6 +39,7 @@ export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
     setRepeat("none");
     setColor(COLOR_OPTIONS[0]);
     setSelectedFriends([]);
+    setShowInvite(false);
   }
 
   function toggleFriend(friendId: string) {
@@ -154,27 +156,40 @@ export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
         </div>
       </div>
 
-      {/* 친구 초대 */}
+      {/* 친구 초대 토글 */}
       {friends.length > 0 && (
-        <div className="form-label">
-          Party Members
-          <div className="invite-friends-list">
-            {friends.map((friend) => (
-              <button
-                key={friend.userId}
-                type="button"
-                className={`invite-friend-btn ${
-                  selectedFriends.includes(friend.userId) ? "selected" : ""
-                }`}
-                onClick={() => toggleFriend(friend.userId)}
-              >
-                <span className="invite-friend-name">{friend.nickname}</span>
-                <span className="invite-friend-level pixel-font">
-                  Lv.{friend.level}
-                </span>
-              </button>
-            ))}
-          </div>
+        <div className="invite-section">
+          <label className="invite-toggle">
+            <input
+              type="checkbox"
+              checked={showInvite}
+              onChange={(e) => {
+                setShowInvite(e.target.checked);
+                if (!e.target.checked) setSelectedFriends([]);
+              }}
+            />
+            <span>Invite Party Members</span>
+          </label>
+
+          {showInvite && (
+            <div className="invite-friends-list">
+              {friends.map((friend) => (
+                <button
+                  key={friend.userId}
+                  type="button"
+                  className={`invite-friend-btn ${
+                    selectedFriends.includes(friend.userId) ? "selected" : ""
+                  }`}
+                  onClick={() => toggleFriend(friend.userId)}
+                >
+                  <span className="invite-friend-name">{friend.nickname}</span>
+                  <span className="invite-friend-level pixel-font">
+                    Lv.{friend.level}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

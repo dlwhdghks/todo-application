@@ -121,6 +121,27 @@
 }
 
 /* 친구 초대 */
+.invite-section {
+  margin-bottom: 12px;
+}
+
+.invite-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.invite-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1a1a2e;
+}
+
 .invite-friends-list {
   display: flex;
   flex-direction: column;
