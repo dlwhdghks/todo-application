@@ -23,6 +23,7 @@ import { ConflictModal } from "./components/ConflictModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { NotificationPanel } from "./components/NotificationPanel";
 import { ApiTokenPanel } from "./components/ApiTokenPanel";
+import { AiRecommendPanel } from "./components/AiRecommendPanel";
 
 import "./App.css";
 
@@ -79,6 +80,7 @@ function MainApp({
   const [showFriends, setShowFriends] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showApiTokens, setShowApiTokens] = useState(false);
+  const [showAi, setShowAi] = useState(false);
 
   if (profileLoading) {
     return (
@@ -155,6 +157,7 @@ function MainApp({
           setShowNotifications(true);
           refreshInvitations();
         }}
+        onOpenAi={() => setShowAi(true)}
         pendingCount={pendingCount}
       />
 
@@ -221,6 +224,14 @@ function MainApp({
           onAddFriend={addFriendByCode}
           onGetFriendQuests={getFriendQuests}
           onClose={() => setShowFriends(false)}
+        />
+      )}
+
+      {showAi && (
+        <AiRecommendPanel
+          onAddQuest={handleAddQuest}
+          onClose={() => setShowAi(false)}
+          apiToken={tokens.length > 0 ? tokens[0].token : null}
         />
       )}
 
