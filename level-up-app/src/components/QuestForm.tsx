@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { Quest } from "../types";
+import type { FriendInfo } from "../hooks/useFriends";
 import { getTodayString, getCurrentTime, generateId } from "../utils/questUtils";
 import "./QuestForm.css";
 
-// 선택 가능한 색상 목록
 const COLOR_OPTIONS = [
   "#e94560",
   "#f5a623",
@@ -16,18 +16,20 @@ const COLOR_OPTIONS = [
 ];
 
 interface Props {
-  onAdd: (quest: Quest) => void;
-  onConflict: (existing: Quest, newQuest: Quest) => void;
+  onAdd: (quest: Quest, inviteFriendIds: string[]) => void;
+  onConflict: (existing: Quest, newQuest: Quest, inviteFriendIds: string[]) => void;
   quests: Quest[];
+  friends: FriendInfo[];
 }
 
-export function QuestForm({ onAdd, onConflict, quests }: Props) {
+export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(getTodayString());
   const [time, setTime] = useState(getCurrentTime());
   const [repeat, setRepeat] = useState<"none" | "daily" | "weekly">("none");
   const [color, setColor] = useState(COLOR_OPTIONS[0]);
+  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
 
   function resetForm() {
     setTitle("");
@@ -35,6 +37,15 @@ export function QuestForm({ onAdd, onConflict, quests }: Props) {
     setTime(getCurrentTime());
     setRepeat("none");
     setColor(COLOR_OPTIONS[0]);
+    setSelectedFriends([]);
+  }
+
+  function toggleFriend(friendId: string) {
+    setSelectedFriends((prev) =>
+      prev.includes(friendId)
+        ? prev.filter((id) => id !== friendId)
+        : [...prev, friendId]
+    );
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -52,15 +63,14 @@ export function QuestForm({ onAdd, onConflict, quests }: Props) {
       createdAt: Date.now(),
     };
 
-    // 같은 날짜 + 같은 시간에 기존 퀘스트가 있는지 확인
     const conflict = quests.find(
       (q) => q.date === date && q.time === time
     );
 
     if (conflict) {
-      onConflict(conflict, newQuest);
+      onConflict(conflict, newQuest, selectedFriends);
     } else {
-      onAdd(newQuest);
+      onAdd(newQuest, selectedFriends);
     }
 
     resetForm();
@@ -143,6 +153,30 @@ export function QuestForm({ onAdd, onConflict, quests }: Props) {
           ))}
         </div>
       </div>
+
+      {/* 친구 초대 */}
+      {friends.length > 0 && (
+        <div className="form-label">
+          Party Members
+          <div className="invite-friends-list">
+            {friends.map((friend) => (
+              <button
+                key={friend.userId}
+                type="button"
+                className={`invite-friend-btn ${
+                  selectedFriends.includes(friend.userId) ? "selected" : ""
+                }`}
+                onClick={() => toggleFriend(friend.userId)}
+              >
+                <span className="invite-friend-name">{friend.nickname}</span>
+                <span className="invite-friend-level pixel-font">
+                  Lv.{friend.level}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="form-actions">
         <button

@@ -119,3 +119,43 @@
 .form-submit-btn:hover {
   background: #16213e;
 }
+
+/* 친구 초대 */
+.invite-friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.invite-friend-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.invite-friend-btn:hover {
+  border-color: #ccc;
+}
+
+.invite-friend-btn.selected {
+  border-color: #1a1a2e;
+  background: #f0f0f5;
+}
+
+.invite-friend-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.invite-friend-level {
+  font-size: 8px;
+  color: #f5a623;
+}

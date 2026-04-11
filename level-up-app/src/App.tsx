@@ -5,6 +5,7 @@ import { useProfile } from "./hooks/useProfile";
 import { useSupabaseQuests } from "./hooks/useSupabaseQuests";
 import { useSupabaseProgress } from "./hooks/useSupabaseProgress";
 import { useFriends } from "./hooks/useFriends";
+import { useInvitations } from "./hooks/useInvitations";
 import { loadViewMode, saveViewMode } from "./utils/localStorage";
 import { isQuestCompletedOnDate } from "./utils/questUtils";
 
@@ -19,6 +20,7 @@ import { OverdueQuestSection } from "./components/OverdueQuestSection";
 import { EditQuestModal } from "./components/EditQuestModal";
 import { ConflictModal } from "./components/ConflictModal";
 import { FriendsPanel } from "./components/FriendsPanel";
+import { NotificationPanel } from "./components/NotificationPanel";
 
 import "./App.css";
 
@@ -55,16 +57,25 @@ function MainApp({
   const { progress, addExp, removeExp, showLevelUp } =
     useSupabaseProgress(userId);
   const { friends, addFriendByCode, getFriendQuests } = useFriends(userId);
+  const {
+    invitations,
+    pendingCount,
+    sendInvitations,
+    acceptInvitation,
+    declineInvitation,
+    refreshInvitations,
+  } = useInvitations(userId);
 
   const [viewMode, setViewMode] = useState<ViewMode>(() => loadViewMode());
   const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
   const [conflictData, setConflictData] = useState<{
     existing: Quest;
     newQuest: Quest;
+    inviteFriendIds: string[];
   } | null>(null);
   const [showFriends, setShowFriends] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
-  // 프로필 로딩 중
   if (profileLoading) {
     return (
       <div className="app loading-screen">
@@ -73,7 +84,6 @@ function MainApp({
     );
   }
 
-  // 닉네임 미설정 -> 닉네임 입력 화면
   if (!profile) {
     return <NicknameForm onSubmit={createProfile} />;
   }
@@ -97,14 +107,22 @@ function MainApp({
     }
   }
 
-  function handleConflict(existing: Quest, newQuest: Quest) {
-    setConflictData({ existing, newQuest });
+  // 퀘스트 추가 + 친구 초대
+  function handleAddQuest(quest: Quest, inviteFriendIds: string[]) {
+    addQuest(quest);
+    if (inviteFriendIds.length > 0) {
+      sendInvitations(quest.id, inviteFriendIds);
+    }
+  }
+
+  function handleConflict(existing: Quest, newQuest: Quest, inviteFriendIds: string[]) {
+    setConflictData({ existing, newQuest, inviteFriendIds });
   }
 
   function handleConflictConfirm() {
     if (!conflictData) return;
     deleteQuest(conflictData.existing.id);
-    addQuest(conflictData.newQuest);
+    handleAddQuest(conflictData.newQuest, conflictData.inviteFriendIds);
     setConflictData(null);
   }
 
@@ -118,9 +136,23 @@ function MainApp({
     setEditingQuest(null);
   }
 
+  // 초대 수락 후 퀘스트 목록 갱신
+  async function handleAcceptInvitation(invitationId: number, questId: string) {
+    await acceptInvitation(invitationId, questId);
+    // 새로 추가된 퀘스트 반영을 위해 페이지 새로고침 대신 간단히 처리
+    window.location.reload();
+  }
+
   return (
     <div className="app">
-      <Header onOpenFriends={() => setShowFriends(true)} />
+      <Header
+        onOpenFriends={() => setShowFriends(true)}
+        onOpenNotifications={() => {
+          setShowNotifications(true);
+          refreshInvitations();
+        }}
+        pendingCount={pendingCount}
+      />
 
       <div className="user-bar">
         <span className="user-email">{userEmail}</span>
@@ -138,7 +170,8 @@ function MainApp({
 
       <QuestForm
         quests={quests}
-        onAdd={addQuest}
+        friends={friends}
+        onAdd={handleAddQuest}
         onConflict={handleConflict}
       />
 
@@ -179,6 +212,15 @@ function MainApp({
           onAddFriend={addFriendByCode}
           onGetFriendQuests={getFriendQuests}
           onClose={() => setShowFriends(false)}
+        />
+      )}
+
+      {showNotifications && (
+        <NotificationPanel
+          invitations={invitations}
+          onAccept={handleAcceptInvitation}
+          onDecline={declineInvitation}
+          onClose={() => setShowNotifications(false)}
         />
       )}
     </div>
