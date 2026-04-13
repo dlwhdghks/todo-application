@@ -4,18 +4,22 @@ import "./SettingsPanel.css";
 
 interface Props {
   userEmail: string | undefined;
+  nickname: string;
   tokens: ApiToken[];
   onCreateToken: (name: string) => Promise<string>;
   onDeleteToken: (id: number) => void;
+  onUpdateNickname: (name: string) => Promise<void>;
   onSignOut: () => void;
   onClose: () => void;
 }
 
 export function SettingsPanel({
   userEmail,
+  nickname,
   tokens,
   onCreateToken,
   onDeleteToken,
+  onUpdateNickname,
   onSignOut,
   onClose,
 }: Props) {
@@ -24,6 +28,12 @@ export function SettingsPanel({
   const [newToken, setNewToken] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // 닉네임 변경
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [newNickname, setNewNickname] = useState(nickname);
+  const [nicknameError, setNicknameError] = useState("");
+  const [nicknameSaving, setNicknameSaving] = useState(false);
 
   async function handleCreateToken() {
     if (!tokenName.trim()) return;
@@ -36,6 +46,24 @@ export function SettingsPanel({
       // ignore
     }
     setCreating(false);
+  }
+
+  async function handleNicknameSave() {
+    if (!newNickname.trim() || newNickname.trim() === nickname) {
+      setEditingNickname(false);
+      return;
+    }
+    setNicknameError("");
+    setNicknameSaving(true);
+    try {
+      await onUpdateNickname(newNickname.trim());
+      setEditingNickname(false);
+    } catch (err: unknown) {
+      setNicknameError(
+        err instanceof Error ? err.message : "Failed to update nickname"
+      );
+    }
+    setNicknameSaving(false);
   }
 
   function handleCopy(text: string) {
@@ -53,6 +81,47 @@ export function SettingsPanel({
         <div className="settings-section">
           <span className="settings-label">Account</span>
           <span className="settings-email">{userEmail}</span>
+        </div>
+
+        {/* 닉네임 */}
+        <div className="settings-section">
+          <span className="settings-label">Nickname</span>
+          {editingNickname ? (
+            <div className="nickname-edit-row">
+              <input
+                type="text"
+                className="form-input"
+                value={newNickname}
+                onChange={(e) => setNewNickname(e.target.value)}
+                maxLength={20}
+                autoFocus
+              />
+              <button
+                className="add-friend-btn"
+                onClick={handleNicknameSave}
+                disabled={nicknameSaving}
+              >
+                {nicknameSaving ? "..." : "Save"}
+              </button>
+            </div>
+          ) : (
+            <div className="nickname-display-row">
+              <span className="settings-nickname">{nickname}</span>
+              <button
+                className="nickname-edit-btn"
+                onClick={() => {
+                  setNewNickname(nickname);
+                  setEditingNickname(true);
+                  setNicknameError("");
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          )}
+          {nicknameError && (
+            <p className="nickname-error">{nicknameError}</p>
+          )}
         </div>
 
         {/* API Tokens */}

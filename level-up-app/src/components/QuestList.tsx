@@ -60,7 +60,13 @@ export function QuestList({
             )}
 
             {visible.length === 0 ? (
-              <p className="no-quests">No quests</p>
+              <div className="no-quests-box">
+                <span className="no-quests-icon">&#9876;</span>
+                <p className="no-quests-text pixel-font">No Quests</p>
+                <p className="no-quests-hint">
+                  + New Quest to start your adventure!
+                </p>
+              </div>
             ) : (
               <div className="quest-cards">
                 {visible.map((quest) => (

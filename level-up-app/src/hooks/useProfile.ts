@@ -62,5 +62,27 @@ export function useProfile(userId: string) {
     [userId]
   );
 
-  return { profile, loading, createProfile };
+  // 닉네임 변경
+  const updateNickname = useCallback(
+    async (newNickname: string) => {
+      const { error } = await supabase
+        .from("user_profiles")
+        .update({ nickname: newNickname })
+        .eq("user_id", userId);
+
+      if (error) {
+        if (error.code === "23505") {
+          throw new Error("This nickname is already taken.");
+        }
+        throw error;
+      }
+
+      setProfile((prev) =>
+        prev ? { ...prev, nickname: newNickname } : prev
+      );
+    },
+    [userId]
+  );
+
+  return { profile, loading, createProfile, updateNickname };
 }

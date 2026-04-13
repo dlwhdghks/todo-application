@@ -135,5 +135,18 @@ export function useFriends(userId: string) {
     }));
   }
 
-  return { friends, loading, addFriendByCode, getFriendQuests };
+  // 친구 삭제
+  async function removeFriend(friendId: string) {
+    // 양방향 삭제 (내가 추가한 것 + 상대가 추가한 것)
+    await supabase
+      .from("friendships")
+      .delete()
+      .or(
+        `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`
+      );
+
+    await fetchFriends();
+  }
+
+  return { friends, loading, addFriendByCode, getFriendQuests, removeFriend };
 }

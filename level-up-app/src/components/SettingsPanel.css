@@ -51,6 +51,47 @@
   margin-top: 8px;
 }
 
+.nickname-display-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-nickname {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.nickname-edit-btn {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+}
+
+.nickname-edit-btn:hover {
+  background: #f0f0f0;
+}
+
+.nickname-edit-row {
+  display: flex;
+  gap: 8px;
+}
+
+.nickname-edit-row .form-input {
+  flex: 1;
+}
+
+.nickname-error {
+  font-size: 12px;
+  color: #e94560;
+  margin-top: 4px;
+}
+
 .settings-signout-btn {
   width: 100%;
   padding: 12px;

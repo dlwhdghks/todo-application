@@ -1,0 +1,40 @@
+.exp-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  pointer-events: none;
+  animation: expFloat 1.2s ease-out forwards;
+}
+
+.exp-popup-text {
+  font-size: 18px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.exp-popup.positive .exp-popup-text {
+  color: #f5a623;
+}
+
+.exp-popup.negative .exp-popup-text {
+  color: #e94560;
+}
+
+@keyframes expFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+  40% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(1);
+  }
+}

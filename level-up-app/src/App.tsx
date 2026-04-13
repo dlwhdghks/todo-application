@@ -24,6 +24,7 @@ import { FriendsPanel } from "./components/FriendsPanel";
 import { NotificationPanel } from "./components/NotificationPanel";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { AiRecommendPanel } from "./components/AiRecommendPanel";
+import { ExpPopup } from "./components/ExpPopup";
 
 import "./App.css";
 
@@ -54,12 +55,14 @@ function MainApp({
   userEmail: string | undefined;
   onSignOut: () => void;
 }) {
-  const { profile, loading: profileLoading, createProfile } = useProfile(userId);
+  const { profile, loading: profileLoading, createProfile, updateNickname } =
+    useProfile(userId);
   const { quests, addQuest, updateQuest, deleteQuest, toggleComplete } =
     useSupabaseQuests(userId);
   const { progress, addExp, removeExp, showLevelUp } =
     useSupabaseProgress(userId);
-  const { friends, addFriendByCode, getFriendQuests } = useFriends(userId);
+  const { friends, addFriendByCode, getFriendQuests, removeFriend } =
+    useFriends(userId);
   const {
     invitations,
     pendingCount,
@@ -81,6 +84,10 @@ function MainApp({
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAi, setShowAi] = useState(false);
+
+  // EXP 팝업용 상태
+  const [expAmount, setExpAmount] = useState(0);
+  const [expTrigger, setExpTrigger] = useState(0);
 
   if (profileLoading) {
     return (
@@ -108,9 +115,12 @@ function MainApp({
 
     if (wasCompleted) {
       removeExp(10);
+      setExpAmount(-10);
     } else {
       addExp(10);
+      setExpAmount(10);
     }
+    setExpTrigger((prev) => prev + 1);
   }
 
   async function handleAddQuest(quest: Quest, inviteFriendIds: string[]) {
@@ -143,6 +153,10 @@ function MainApp({
 
   async function handleAcceptInvitation(invitationId: number, questId: string) {
     await acceptInvitation(invitationId, questId);
+    // 새로 추가된 퀘스트를 반영하기 위해 퀘스트 목록 다시 불러오기
+    // addQuest가 로컬 상태를 업데이트하지 않으므로 페이지를 리프레시 대신
+    // supabase에서 다시 fetch하도록 간접적으로 트리거
+    // TODO: useSupabaseQuests에 refetch 추가하면 더 깔끔
     window.location.reload();
   }
 
@@ -186,6 +200,8 @@ function MainApp({
         onClickQuest={setEditingQuest}
       />
 
+      <ExpPopup amount={expAmount} trigger={expTrigger} />
+
       {editingQuest && (
         <EditQuestModal
           quest={editingQuest}
@@ -209,6 +225,7 @@ function MainApp({
           friends={friends}
           onAddFriend={addFriendByCode}
           onGetFriendQuests={getFriendQuests}
+          onRemoveFriend={removeFriend}
           onClose={() => setShowFriends(false)}
         />
       )}
@@ -217,16 +234,17 @@ function MainApp({
         <AiRecommendPanel
           onAddQuest={handleAddQuest}
           onClose={() => setShowAi(false)}
-          apiToken={tokens.length > 0 ? tokens[0].token : null}
         />
       )}
 
       {showSettings && (
         <SettingsPanel
           userEmail={userEmail}
+          nickname={profile.nickname}
           tokens={tokens}
           onCreateToken={createToken}
           onDeleteToken={deleteToken}
+          onUpdateNickname={updateNickname}
           onSignOut={onSignOut}
           onClose={() => setShowSettings(false)}
         />

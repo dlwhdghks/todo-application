@@ -37,17 +37,24 @@ export function AuthForm({ onSignIn, onSignUp }: Props) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">Level Up</h1>
-        <p className="auth-subtitle">
-          {isSignUp ? "Create your account" : "Sign in to continue"}
+        {/* 픽셀 아트 검 장식 */}
+        <div className="auth-pixel-art">
+          <span className="auth-sword">&#9876;</span>
+        </div>
+
+        <h1 className="auth-title pixel-font">Level Up</h1>
+        <p className="auth-tagline pixel-font">
+          {isSignUp ? "Join the Adventure" : "Welcome Back"}
         </p>
+
+        <div className="auth-decorline" />
 
         <form onSubmit={handleSubmit}>
           <label className="form-label">
             Email
             <input
               type="email"
-              className="form-input"
+              className="form-input auth-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -59,7 +66,7 @@ export function AuthForm({ onSignIn, onSignUp }: Props) {
             Password
             <input
               type="password"
-              className="form-input"
+              className="form-input auth-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="6 characters minimum"
@@ -79,8 +86,8 @@ export function AuthForm({ onSignIn, onSignUp }: Props) {
             {submitting
               ? "..."
               : isSignUp
-              ? "Sign Up"
-              : "Sign In"}
+              ? ">> Start Game <<"
+              : ">> Continue <<"}
           </button>
         </form>
 
@@ -93,8 +100,8 @@ export function AuthForm({ onSignIn, onSignUp }: Props) {
           }}
         >
           {isSignUp
-            ? "Already have an account? Sign In"
-            : "Don't have an account? Sign Up"}
+            ? "Already have a save? Sign In"
+            : "New player? Sign Up"}
         </button>
       </div>
     </div>

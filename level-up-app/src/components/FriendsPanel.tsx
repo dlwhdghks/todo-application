@@ -10,6 +10,7 @@ interface Props {
   friends: FriendInfo[];
   onAddFriend: (code: string) => Promise<string | null>;
   onGetFriendQuests: (friendId: string) => Promise<Quest[]>;
+  onRemoveFriend: (friendId: string) => void;
   onClose: () => void;
 }
 
@@ -18,6 +19,7 @@ export function FriendsPanel({
   friends,
   onAddFriend,
   onGetFriendQuests,
+  onRemoveFriend,
   onClose,
 }: Props) {
   const [codeInput, setCodeInput] = useState("");
@@ -176,12 +178,25 @@ export function FriendsPanel({
                   <div
                     key={friend.userId}
                     className="friend-item"
-                    onClick={() => handleViewFriend(friend)}
                   >
-                    <span className="friend-nickname">{friend.nickname}</span>
-                    <span className="friend-level pixel-font">
-                      Lv.{friend.level}
-                    </span>
+                    <div
+                      className="friend-item-info"
+                      onClick={() => handleViewFriend(friend)}
+                    >
+                      <span className="friend-nickname">{friend.nickname}</span>
+                      <span className="friend-level pixel-font">
+                        Lv.{friend.level}
+                      </span>
+                    </div>
+                    <button
+                      className="friend-remove-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveFriend(friend.userId);
+                      }}
+                    >
+                      X
+                    </button>
                   </div>
                 ))
               )}

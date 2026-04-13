@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Quest } from "../types";
 import { generateId, getTodayString } from "../utils/questUtils";
+import { supabase } from "../utils/supabase";
 import "./AiRecommendPanel.css";
 
 interface Recommendation {
@@ -12,31 +13,33 @@ interface Recommendation {
 interface Props {
   onAddQuest: (quest: Quest, inviteFriendIds: string[]) => void;
   onClose: () => void;
-  apiToken: string | null;
 }
 
-export function AiRecommendPanel({ onAddQuest, onClose, apiToken }: Props) {
+export function AiRecommendPanel({ onAddQuest, onClose }: Props) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [addedIndexes, setAddedIndexes] = useState<number[]>([]);
 
   async function fetchRecommendations() {
-    if (!apiToken) {
-      setError("API token not found. Create one in API settings.");
-      return;
-    }
-
     setLoading(true);
     setError("");
     setAddedIndexes([]);
 
     try {
-      const res = await fetch("/api/recommend", {
+      // Supabase 세션 토큰으로 인증
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError("Not logged in.");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/recommend-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiToken}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
