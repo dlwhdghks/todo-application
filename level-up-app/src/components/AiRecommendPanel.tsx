@@ -44,13 +44,14 @@ export function AiRecommendPanel({ onAddQuest, onClose }: Props) {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to get recommendations");
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.error || `Server error (${res.status})`);
       }
 
       const data = await res.json();
       setRecommendations(data.recommendations || []);
-    } catch {
-      setError("AI recommendation failed. Try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "AI recommendation failed. Try again.");
     } finally {
       setLoading(false);
     }
