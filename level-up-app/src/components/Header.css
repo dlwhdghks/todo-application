@@ -1,13 +1,13 @@
 .header {
   text-align: center;
-  padding: 24px 16px 12px;
+  padding: 8px 16px 12px;
   position: relative;
 }
 
 .header-party-btn {
   position: absolute;
   left: 16px;
-  top: 24px;
+  top: 8px;
   width: 36px;
   height: 36px;
   border: 2px solid #1a1a2e;
@@ -35,7 +35,7 @@
 .header-right-btns {
   position: absolute;
   right: 16px;
-  top: 24px;
+  top: 8px;
   display: flex;
   gap: 8px;
 }
