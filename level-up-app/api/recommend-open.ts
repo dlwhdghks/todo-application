@@ -59,7 +59,10 @@ Return ONLY the JSON array, no other text.`;
   }
 
   const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || "[]";
+  let content = data.choices?.[0]?.message?.content || "[]";
+
+  // AI가 ```json ... ``` 으로 감싸는 경우 제거
+  content = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
 
   try {
     const recommendations = JSON.parse(content);
