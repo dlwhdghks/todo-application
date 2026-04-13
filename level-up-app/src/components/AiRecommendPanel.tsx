@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Quest } from "../types";
 import { generateId, getTodayString } from "../utils/questUtils";
-import { supabase } from "../utils/supabase";
 import "./AiRecommendPanel.css";
 
 interface Recommendation {
@@ -11,11 +10,14 @@ interface Recommendation {
 }
 
 interface Props {
+  quests: Quest[];
+  nickname: string;
+  level: number;
   onAddQuest: (quest: Quest, inviteFriendIds: string[]) => void;
   onClose: () => void;
 }
 
-export function AiRecommendPanel({ onAddQuest, onClose }: Props) {
+export function AiRecommendPanel({ quests, nickname, level, onAddQuest, onClose }: Props) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -27,20 +29,22 @@ export function AiRecommendPanel({ onAddQuest, onClose }: Props) {
     setAddedIndexes([]);
 
     try {
-      // Supabase 세션 토큰으로 인증
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setError("Not logged in.");
-        setLoading(false);
-        return;
-      }
+      // 최근 퀘스트 30개만 전달
+      const recentQuests = quests.slice(0, 30).map((q) => ({
+        title: q.title,
+        date: q.date,
+        time: q.time,
+        repeat: q.repeat,
+      }));
 
-      const res = await fetch("/api/recommend-session", {
+      const res = await fetch("/api/recommend-open", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quests: recentQuests,
+          nickname,
+          level,
+        }),
       });
 
       if (!res.ok) {
@@ -51,7 +55,7 @@ export function AiRecommendPanel({ onAddQuest, onClose }: Props) {
       const data = await res.json();
       setRecommendations(data.recommendations || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "AI recommendation failed. Try again.");
+      setError(err instanceof Error ? err.message : "AI recommendation failed.");
     } finally {
       setLoading(false);
     }

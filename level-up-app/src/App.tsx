@@ -232,6 +232,9 @@ function MainApp({
 
       {showAi && (
         <AiRecommendPanel
+          quests={quests}
+          nickname={profile.nickname}
+          level={progress.level}
           onAddQuest={handleAddQuest}
           onClose={() => setShowAi(false)}
         />
