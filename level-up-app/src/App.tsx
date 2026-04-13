@@ -22,7 +22,7 @@ import { EditQuestModal } from "./components/EditQuestModal";
 import { ConflictModal } from "./components/ConflictModal";
 import { FriendsPanel } from "./components/FriendsPanel";
 import { NotificationPanel } from "./components/NotificationPanel";
-import { ApiTokenPanel } from "./components/ApiTokenPanel";
+import { SettingsPanel } from "./components/SettingsPanel";
 import { AiRecommendPanel } from "./components/AiRecommendPanel";
 
 import "./App.css";
@@ -79,7 +79,7 @@ function MainApp({
   } | null>(null);
   const [showFriends, setShowFriends] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showApiTokens, setShowApiTokens] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [showAi, setShowAi] = useState(false);
 
   if (profileLoading) {
@@ -113,7 +113,6 @@ function MainApp({
     }
   }
 
-  // 퀘스트 추가 + 친구 초대 (퀘스트 저장 완료 후 초대 발송)
   async function handleAddQuest(quest: Quest, inviteFriendIds: string[]) {
     await addQuest(quest);
     if (inviteFriendIds.length > 0) {
@@ -142,10 +141,8 @@ function MainApp({
     setEditingQuest(null);
   }
 
-  // 초대 수락 후 퀘스트 목록 갱신
   async function handleAcceptInvitation(invitationId: number, questId: string) {
     await acceptInvitation(invitationId, questId);
-    // 새로 추가된 퀘스트 반영을 위해 페이지 새로고침 대신 간단히 처리
     window.location.reload();
   }
 
@@ -157,21 +154,9 @@ function MainApp({
           setShowNotifications(true);
           refreshInvitations();
         }}
-        onOpenAi={() => setShowAi(true)}
+        onOpenSettings={() => setShowSettings(true)}
         pendingCount={pendingCount}
       />
-
-      <div className="user-bar">
-        <span className="user-email">{userEmail}</span>
-        <div className="user-bar-actions">
-          <button className="api-btn" onClick={() => setShowApiTokens(true)}>
-            API
-          </button>
-          <button className="sign-out-btn" onClick={onSignOut}>
-            Sign Out
-          </button>
-        </div>
-      </div>
 
       <ProgressPanel
         progress={progress}
@@ -185,6 +170,7 @@ function MainApp({
         friends={friends}
         onAdd={handleAddQuest}
         onConflict={handleConflict}
+        onOpenAi={() => setShowAi(true)}
       />
 
       <OverdueQuestSection
@@ -235,12 +221,14 @@ function MainApp({
         />
       )}
 
-      {showApiTokens && (
-        <ApiTokenPanel
+      {showSettings && (
+        <SettingsPanel
+          userEmail={userEmail}
           tokens={tokens}
-          onCreate={createToken}
-          onDelete={deleteToken}
-          onClose={() => setShowApiTokens(false)}
+          onCreateToken={createToken}
+          onDeleteToken={deleteToken}
+          onSignOut={onSignOut}
+          onClose={() => setShowSettings(false)}
         />
       )}
 

@@ -3,11 +3,11 @@ import "./Header.css";
 interface Props {
   onOpenFriends: () => void;
   onOpenNotifications: () => void;
-  onOpenAi: () => void;
+  onOpenSettings: () => void;
   pendingCount: number;
 }
 
-export function Header({ onOpenFriends, onOpenNotifications, onOpenAi, pendingCount }: Props) {
+export function Header({ onOpenFriends, onOpenNotifications, onOpenSettings, pendingCount }: Props) {
   return (
     <header className="header">
       <button className="header-party-btn" onClick={onOpenFriends} title="Party">
@@ -18,8 +18,8 @@ export function Header({ onOpenFriends, onOpenNotifications, onOpenAi, pendingCo
       <p className="header-subtitle">Complete quests. Gain EXP. Level up.</p>
 
       <div className="header-right-btns">
-        <button className="header-ai-btn" onClick={onOpenAi} title="AI Quest">
-          AI
+        <button className="header-settings-btn" onClick={onOpenSettings} title="Settings">
+          &#9881;
         </button>
         <button
           className={`header-notif-btn ${pendingCount > 0 ? "has-pending" : ""}`}

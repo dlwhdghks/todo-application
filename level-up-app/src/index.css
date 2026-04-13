@@ -19,3 +19,8 @@ body {
 .pixel-font {
   font-family: "Press Start 2P", monospace;
 }
+
+/* iOS에서 input focus 시 줌 방지 - font-size 최소 16px */
+input, select, textarea {
+  font-size: 16px;
+}

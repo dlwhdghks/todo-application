@@ -20,9 +20,10 @@ interface Props {
   onConflict: (existing: Quest, newQuest: Quest, inviteFriendIds: string[]) => void;
   quests: Quest[];
   friends: FriendInfo[];
+  onOpenAi: () => void;
 }
 
-export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
+export function QuestForm({ onAdd, onConflict, quests, friends, onOpenAi }: Props) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(getTodayString());
@@ -84,6 +85,9 @@ export function QuestForm({ onAdd, onConflict, quests, friends }: Props) {
       <div className="quest-form-trigger">
         <button className="add-quest-btn" onClick={() => setOpen(true)}>
           + New Quest
+        </button>
+        <button className="add-quest-ai-btn" onClick={onOpenAi}>
+          AI
         </button>
       </div>
     );
